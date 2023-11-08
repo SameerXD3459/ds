@@ -1,0 +1,924 @@
+Q.1 Implement stack ADT using arrays
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100
+
+// Stack structure
+typedef struct {
+    int items[MAX_SIZE];
+    int top;
+} Stack;
+
+// Function to initialize the stack
+void initialize(Stack *stack) {
+    stack->top = -1;
+}
+
+// Function to check if the stack is empty
+int isEmpty(Stack *stack) {
+    return stack->top == -1;
+}
+
+// Function to check if the stack is full
+int isFull(Stack *stack) {
+    return stack->top == MAX_SIZE - 1;
+}
+
+// Function to push an element into the stack
+void push(Stack *stack, int value) {
+    if (isFull(stack)) {
+        printf("Stack is full. Cannot push %d\n", value);
+    } else {
+        stack->top++;
+        stack->items[stack->top] = value;
+    }
+}
+
+// Function to pop an element from the stack
+int pop(Stack *stack) {
+    if (isEmpty(stack)) {
+        printf("Stack is empty.\n");
+        return -1;
+    } else {
+        int value = stack->items[stack->top];
+        stack->top--;
+        return value;
+    }
+}
+
+// Function to peek the top element of the stack without removing it
+int peek(Stack *stack) {
+    if (isEmpty(stack)) {
+        printf("Stack is empty.\n");
+        return -1;
+    } else {
+        return stack->items[stack->top];
+    }
+}
+
+// Example usage of the stack
+int main() {
+    Stack myStack;
+    initialize(&myStack);
+
+    push(&myStack, 10);
+    push(&myStack, 20);
+    push(&myStack, 30);
+
+    printf("Top element is %d\n", peek(&myStack));
+
+    printf("Popped %d from the stack\n", pop(&myStack));
+    printf("Top element is %d\n", peek(&myStack));
+
+    return 0;
+}
+
+
+
+
+
+
+
+Q.2 Infix to postfix using stack
+
+#include<stdio.h>
+#include<ctype.h>
+
+char stack[100];
+int top = -1;
+
+void push(char x)
+{
+    stack[++top] = x;
+}
+
+char pop()
+{
+    if(top == -1)
+        return -1;
+    else
+        return stack[top--];
+}
+
+int priority(char x)
+{
+    if(x == '(')
+        return 0;
+    if(x == '+' || x == '-')
+        return 1;
+    if(x == '*' || x == '/')
+        return 2;
+    return 0;
+}
+
+int main()
+{
+    char exp[100];
+    char *e, x;
+    printf("Enter the expression : ");
+    scanf("%s",exp);
+    printf("\n");
+    e = exp;
+    
+    while(*e != '\0')
+    {
+        if(isalnum(*e))
+            printf("%c ",*e);
+        else if(*e == '(')
+            push(*e);
+        else if(*e == ')')
+        {
+            while((x = pop()) != '(')
+                printf("%c ", x);
+        }
+        else
+        {
+            while(priority(stack[top]) >= priority(*e))
+                printf("%c ",pop());
+            push(*e);
+        }
+        e++;
+    }
+    
+    while(top != -1)
+    {
+        printf("%c ",pop());
+    }return 0;
+}
+
+
+
+
+
+
+
+
+Q. Postfix expression using stack ADT
+
+// C program to evaluate value of a postfix expression
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Stack type
+struct Stack {
+	int top;
+	unsigned capacity;
+	int* array;
+};
+
+// Stack Operations
+struct Stack* createStack(unsigned capacity)
+{
+	struct Stack* stack
+		= (struct Stack*)malloc(sizeof(struct Stack));
+
+	if (!stack)
+		return NULL;
+
+	stack->top = -1;
+	stack->capacity = capacity;
+	stack->array
+		= (int*)malloc(stack->capacity * sizeof(int));
+
+	if (!stack->array)
+		return NULL;
+
+	return stack;
+}
+
+int isEmpty(struct Stack* stack)
+{
+	return stack->top == -1;
+}
+
+char peek(struct Stack* stack)
+{
+	return stack->array[stack->top];
+}
+
+char pop(struct Stack* stack)
+{
+	if (!isEmpty(stack))
+		return stack->array[stack->top--];
+	return '$';
+}
+
+void push(struct Stack* stack, char op)
+{
+	stack->array[++stack->top] = op;
+}
+
+// The main function that returns value 
+// of a given postfix expression
+int evaluatePostfix(char* exp)
+{
+	// Create a stack of capacity equal to expression size
+	struct Stack* stack = createStack(strlen(exp));
+	int i;
+
+	// See if stack was created successfully
+	if (!stack)
+		return -1;
+
+	// Scan all characters one by one
+	for (i = 0; exp[i]; ++i) {
+		
+		// If the scanned character is an operand 
+		// (number here), push it to the stack.
+		if (isdigit(exp[i]))
+			push(stack, exp[i] - '0');
+
+		// If the scanned character is an operator, 
+		// pop two elements from stack apply the operator
+		else {
+			int val1 = pop(stack);
+			int val2 = pop(stack);
+			switch (exp[i]) {
+			case '+':
+				push(stack, val2 + val1);
+				break;
+			case '-':
+				push(stack, val2 - val1);
+				break;
+			case '*':
+				push(stack, val2 * val1);
+				break;
+			case '/':
+				push(stack, val2 / val1);
+				break;
+			}
+		}
+	}
+	return pop(stack);
+}
+
+// Driver code
+int main()
+{
+	char exp[] = "231*+9-";
+
+	// Function call
+	printf("postfix evaluation: %d", evaluatePostfix(exp));
+	return 0;
+}
+
+
+
+
+
+
+
+
+Q. Implement linear queue insertion ad using array and display all elements.
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 10
+
+typedef struct {
+    int items[MAX_SIZE];
+    int front, rear;
+} Queue;
+
+Queue* createQueue() {
+    Queue* q = (Queue*)malloc(sizeof(Queue));
+    q->front = -1;
+    q->rear = -1;
+    return q;
+}
+
+int isFull(Queue* q) { return q->rear == MAX_SIZE - 1; }
+
+int isEmpty(Queue* q) { return q->front == -1; }
+
+void enqueue(Queue* q, int v) {
+    if (isFull(q)) printf("Queue is full.\n");
+    else {
+        if (q->front == -1) q->front = 0;
+        q->items[++q->rear] = v;
+        printf("Inserted %d into the queue.\n", v);
+    }
+}
+
+void displayQueue(Queue* q) {
+    if (isEmpty(q)) printf("Queue is empty.\n");
+    else {
+        printf("Elements in the queue are: ");
+        for (int i = q->front; i <= q->rear; i++) printf("%d ", q->items[i]);
+        printf("\n");
+    }
+}
+
+int main() {
+    Queue* q = createQueue();
+    enqueue(q, 5);
+    enqueue(q, 10);
+    enqueue(q, 15);
+    displayQueue(q);
+    return 0;
+}
+
+
+
+
+Q. To perform circular queue operation ADT using array and display it
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 5
+
+typedef struct {
+    int items[MAX_SIZE];
+    int f, r;
+} Q;
+
+Q* CQ() {
+    Q* q = (Q*)malloc(sizeof(Q));
+    q->f = -1;
+    q->r = -1;
+    return q;
+}
+
+int F(Q* q) { return (q->r + 1) % MAX_SIZE == q->f; }
+
+int E(Q* q) { return q->f == -1; }
+
+void I(Q* q, int v) {
+    if (F(q)) printf("F\n");
+    else {
+        if (E(q)) q->f = 0;
+        q->r = (q->r + 1) % MAX_SIZE;
+        q->items[q->r] = v;
+        printf("I %d\n", v);
+    }
+}
+
+void D(Q* q) {
+    if (E(q)) printf("E\n");
+    else {
+        int v = q->items[q->f];
+        if (q->f == q->r) {
+            q->f = -1;
+            q->r = -1;
+        } else {
+            q->f = (q->f + 1) % MAX_SIZE;
+        }
+        printf("R %d\n", v);
+    }
+}
+
+void S(Q* q) {
+    if (E(q)) printf("E\n");
+    else {
+        printf("E: ");
+        for (int i = q->f; i != q->r; i = (i + 1) % MAX_SIZE) printf("%d ", q->items[i]);
+        printf("%d\n", q->items[q->r]);
+    }
+}
+
+int main() {
+    Q* q = CQ();
+    I(q, 1);
+    I(q, 2);
+    I(q, 3);
+    I(q, 4);
+    S(q);
+    D(q);
+    D(q);
+    S(q);
+    I(q, 5);
+    I(q, 6);
+    S(q);
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+Q. To implement Binary Search Tree
+
+#include <stdio.h> 
+#include <stdlib.h> 
+struct TreeNode { 
+ int data; 
+ struct TreeNode* left; 
+ struct TreeNode* right; 
+}; 
+struct TreeNode* createNode(int data) { 
+ struct TreeNode* newNode = (struct TreeNode*)malloc(sizeof(struct TreeNode)); 
+ newNode->data = data; 
+ newNode->left = newNode->right = NULL; 
+ return newNode; 
+} 
+struct TreeNode* insert(struct TreeNode* root, int data) { 
+ if (root == NULL) { 
+ return createNode(data); 
+ } 
+ if (data < root->data) { 
+ root->left = insert(root->left, data); 
+ } else if (data > root->data) { 
+ root->right = insert(root->right, data); 
+ } 
+ return root; 
+} 
+void inorderTraversal(struct TreeNode* root) { 
+ if (root != NULL) { 
+ inorderTraversal(root->left); 
+ printf("%d ", root->data); 
+ inorderTraversal(root->right); 
+ } 
+} 
+int main() { 
+ struct TreeNode* root = NULL; 
+ int numValues, value; 
+ printf("Enter the number of values: "); 
+ scanf("%d", &numValues); 
+ printf("Enter %d values:\n", numValues); 
+ for (int i = 0; i < numValues; i++) { 
+ scanf("%d", &value); 
+ root = insert(root, value); 
+ } 
+ 
+ printf("In-order traversal of the BST: "); 
+ inorderTraversal(root); 
+ printf("\n"); 
+ return 0; 
+} 
+
+
+
+
+
+
+
+
+Q. Circular Linked List (not sure if this works)
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void addToEmpty(struct Node** last, int data) {
+    if (*last != NULL)
+        return;
+
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    *last = newNode;
+    (*last)->next = *last;
+}
+
+void addEnd(struct Node** last, int data) {
+    if (*last == NULL)
+        return;
+
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = (*last)->next;
+    (*last)->next = newNode;
+    *last = newNode;
+}
+
+// Other necessary functions like delete, display, etc., can be added as needed.
+
+int main() {
+    struct Node* last = NULL;
+
+    // Example usage:
+    addToEmpty(&last, 6);
+    addEnd(&last, 8);
+    addEnd(&last, 10);
+
+    return 0;
+}
+
+
+Q. Implement Stack/Linear Queue using Linked List
+
+#include <stdio.h>
+#include <stdlib.h>
+ 
+struct node
+{
+    int info;
+    struct node *ptr;
+}*top,*top1,*temp;
+ 
+int topelement();
+void push(int data);
+void pop();
+void empty();
+void display();
+void destroy();
+void stack_count();
+void create();
+ 
+int count = 0;
+ 
+void main()
+{
+    int no, ch, e;
+ 
+    printf("\n 1 - Push");
+    printf("\n 2 - Pop");
+    printf("\n 3 - Top");
+    printf("\n 4 - Empty");
+    printf("\n 5 - Exit");
+    printf("\n 6 - Dipslay");
+    printf("\n 7 - Stack Count");
+    printf("\n 8 - Destroy stack");
+ 
+    create();
+ 
+    while (1)
+    {
+        printf("\n Enter choice : ");
+        scanf("%d", &ch);
+ 
+        switch (ch)
+        {
+        case 1:
+            printf("Enter data : ");
+            scanf("%d", &no);
+            push(no);
+            break;
+        case 2:
+            pop();
+            break;
+        case 3:
+            if (top == NULL)
+                printf("No elements in stack");
+            else
+            {
+                e = topelement();
+                printf("\n Top element : %d", e);
+            }
+            break;
+        case 4:
+            empty();
+            break;
+        case 5:
+            exit(0);
+        case 6:
+            display();
+            break;
+        case 7:
+            stack_count();binary
+            break;
+        case 8:
+            destroy();
+            break;
+        default :
+            printf(" Wrong choice, Please enter correct choice  ");
+            break;
+        }
+    }
+}
+ 
+/* Create empty stack */
+void create()
+{
+    top = NULL;
+}
+ 
+/* Count stack elements */
+void stack_count()
+{
+    printf("\n No. of elements in stack : %d", count);
+}
+ 
+/* Push data into stack */
+void push(int data)
+{
+    if (top == NULL)
+    {
+        top =(struct node *)malloc(1*sizeof(struct node));
+        top->ptr = NULL;
+        top->info = data;
+    }
+    else
+    {
+        temp =(struct node *)malloc(1*sizeof(struct node));
+        temp->ptr = top;
+        temp->info = data;
+        top = temp;
+    }
+    count++;
+}
+ 
+/* Display stack elements */
+void display()
+{
+    top1 = top;
+ 
+    if (top1 == NULL)
+    {
+        printf("Stack is empty");
+        return;
+    }
+ 
+    while (top1 != NULL)
+    {
+        printf("%d ", top1->info);
+        top1 = top1->ptr;
+    }
+ }
+ 
+/* Pop Operation on stack */
+void pop()
+{
+    top1 = top;
+ 
+    if (top1 == NULL)
+    {
+        printf("\n Error : Trying to pop from empty stack");
+        return;
+    }
+    else
+        top1 = top1->ptr;
+    printf("\n Popped value : %d", top->info);
+    free(top);
+    top = top1;
+    count--;
+}
+ 
+/* Return top element */
+int topelement()
+{
+    return(top->info);
+}
+ 
+/* Check if stack is empty or not */
+void empty()
+{
+    if (top == NULL)
+        printf("\n Stack is empty");
+    else
+        printf("\n Stack is not empty with %d elements", count);
+}
+ 
+/* Destroy entire stack */
+void destroy()
+{
+    top1 = top;
+ 
+    while (top1 != NULL)
+    {
+        top1 = top->ptr;
+        free(top);
+        top = top1;
+        top1 = top1->ptr;
+    }
+    free(top1);
+    top = NULL;
+ 
+    printf("\n All stack elements destroyed");
+    count = 0;
+}
+
+	
+Q. DEPTH FIRST SEARCH
+
+#include <stdio.h>
+#include <stdlib.h>
+struct node {
+int vertex;
+struct node* next;
+};
+struct node* createNode(int v);
+struct Graph {
+int numVertices;
+int* visited;
+// We need int** to store a two dimensional array. // Similary, we need struct node** to store an array of Linked lists
+struct node** adjLists;
+};
+// DFS algo
+void DFS(struct Graph* graph, int vertex) {
+struct node* adjList = graph->adjLists[vertex];
+struct node* temp = adjList;
+graph->visited[vertex] = 1;
+printf("Visited %d \n", vertex);
+while (temp != NULL) {
+int connectedVertex = temp->vertex;
+if (graph->visited[connectedVertex] == 0) {
+DFS(graph, connectedVertex);
+}
+temp = temp->next;
+}
+}
+// Create a node
+struct node* createNode(int v) {
+struct node* newNode = malloc(sizeof(struct node));
+newNode->vertex = v;
+newNode->next = NULL;
+return newNode;
+}
+// Create graph
+struct Graph* createGraph(int vertices) {
+struct Graph* graph = malloc(sizeof(struct Graph));
+graph->numVertices = vertices;
+graph->adjLists = malloc(vertices * sizeof(struct node*));
+graph->visited = malloc(vertices * sizeof(int));
+int i;
+for (i = 0; i < vertices; i++) {
+graph->adjLists[i] = NULL;
+graph->visited[i] = 0;
+}
+return graph;
+}
+// Add edge
+void addEdge(struct Graph* graph, int src, int dest) {
+// Add edge from src to dest
+struct node* newNode = createNode(dest);
+newNode->next = graph->adjLists[src];
+graph->adjLists[src] = newNode;
+// Add edge from dest to src
+newNode = createNode(src);
+newNode->next = graph->adjLists[dest];
+graph->adjLists[dest] = newNode;
+}
+// Print the graph
+void printGraph(struct Graph* graph) {
+int v;
+for (v = 0; v < graph->numVertices; v++) {
+struct node* temp = graph->adjLists[v];
+printf("\n Adjacency list of vertex %d\n ", v);
+while (temp) {
+printf("%d -> ", temp->vertex);
+temp = temp->next;
+}
+printf("\n");
+}
+}
+int main() {
+struct Graph* graph = createGraph(4);
+addEdge(graph, 0, 1);
+addEdge(graph, 0, 2);
+addEdge(graph, 1, 2);
+addEdge(graph, 2, 3);
+printGraph(graph);
+DFS(graph, 2);
+return 0;
+}
+
+
+Q . BREADTH FIRST SEARCH
+
+#include <stdio.h>
+#include <stdlib.h>
+#define SIZE 40
+struct queue {
+int items[SIZE];
+int front;
+int rear;
+};
+struct queue* createQueue();
+void enqueue(struct queue* q, int);
+int dequeue(struct queue* q);
+void display(struct queue* q);
+int isEmpty(struct queue* q);
+void printQueue(struct queue* q);
+struct node {
+int vertex;
+struct node* next;
+};
+struct node* createNode(int);
+struct Graph {
+int numVertices;
+struct node** adjLists;
+int* visited;
+};
+// BFS algorithm
+void bfs(struct Graph* graph, int startVertex) {
+struct queue* q = createQueue();
+graph->visited[startVertex] = 1;
+enqueue(q, startVertex);
+while (!isEmpty(q)) {
+printQueue(q);
+int currentVertex = dequeue(q);
+printf("Visited %d\n", currentVertex);
+struct node* temp = graph->adjLists[currentVertex];
+while (temp) {
+int adjVertex = temp->vertex;
+if (graph->visited[adjVertex] == 0) {
+graph->visited[adjVertex] = 1;
+enqueue(q, adjVertex);
+}
+temp = temp->next;
+}
+}
+}
+// Creating a node
+struct node* createNode(int v) {
+struct node* newNode = malloc(sizeof(struct node));
+newNode->vertex = v;
+newNode->next = NULL;
+return newNode;
+}
+// Creating a graph
+struct Graph* createGraph(int vertices) {
+struct Graph* graph = malloc(sizeof(struct Graph));
+graph->numVertices = vertices;
+graph->adjLists = malloc(vertices * sizeof(struct node*));
+graph->visited = malloc(vertices * sizeof(int));
+int i;
+for (i = 0; i < vertices; i++) {
+graph->adjLists[i] = NULL;
+graph->visited[i] = 0;
+}
+return graph;
+}
+// Add edge
+void addEdge(struct Graph* graph, int src, int dest) {
+// Add edge from src to dest
+struct node* newNode = createNode(dest);
+newNode->next = graph->adjLists[src];
+graph->adjLists[src] = newNode;
+// Add edge from dest to src
+newNode = createNode(src);
+newNode->next = graph->adjLists[dest];
+graph->adjLists[dest] = newNode;
+}
+struct queue* createQueue() {
+struct queue* q = malloc(sizeof(struct queue));
+q->front = -1;
+q->rear = -1;
+return q;
+}
+// Check if the queue is empty
+int isEmpty(struct queue* q) {
+if (q->rear == -1)
+return 1;
+else
+return 0;
+}
+// Adding elements into queue
+void enqueue(struct queue* q, int value) {
+if (q->rear == SIZE - 1)
+printf("\nQueue is Full!!");
+else {
+if (q->front == -1)
+q->front = 0;
+q->rear++;
+q->items[q->rear] = value;
+}
+}
+// Removing elements from queue
+int dequeue(struct queue* q) {
+int item;
+if (isEmpty(q)) {
+printf("Queue is empty");
+item = -1;
+} else {
+item = q->items[q->front];
+q->front++;
+if (q->front > q->rear) {
+printf("Resetting queue ");
+q->front = q->rear = -1;
+}
+}
+return item;
+}
+void printQueue(struct queue* q) {
+int i = q->front;
+if (isEmpty(q)) {
+printf("Queue is empty");
+} else {
+printf("\nQueue contains \n");
+for (i = q->front; i < q->rear + 1; i++) {
+printf("%d ", q->items[i]);
+}
+}
+}
+int main() {
+struct Graph* graph = createGraph(6);
+addEdge(graph, 0, 1);
+addEdge(graph, 0, 2);
+addEdge(graph, 1, 2);
+addEdge(graph, 1, 4);
+addEdge(graph, 1, 3);
+addEdge(graph, 2, 4);
+addEdge(graph, 3, 4);
+bfs(graph, 0);
+return 0;
+}
